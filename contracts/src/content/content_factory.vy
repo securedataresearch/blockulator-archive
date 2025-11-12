@@ -14,13 +14,19 @@ ARCHITECTURE:
 - Anti-spam cooldowns and fees
 
 CONTENT TYPES:
-- Type 0: Image (up to 64×64 RGB = 12,288 bytes)
+- Type 0: Image (up to 16KB RGB = 5,461 pixels max, dimensions up to 128×128)
 - Type 1: Text (up to 16KB UTF-8 = 16,384 bytes)
+
+SUPPORTED IMAGE DIMENSIONS:
+- Square: 73×73 (15,987 bytes), 64×64 (12,288 bytes), etc.
+- Wide: 128×42 (16,128 bytes), 96×56 (16,128 bytes), etc.
+- Tall: 42×128 (16,128 bytes), 56×96 (16,128 bytes), etc.
+- Custom: Any width×height where width×height×3 ≤ 16,384 and both ≤ 128
 
 ECONOMICS:
 - Optional creation fee (configurable by owner)
 - Cooldown period between uploads (anti-spam)
-- Users pay their own gas (~$10-30 per upload)
+- Users pay their own gas (~$10-30 per upload depending on size)
 """
 
 # ============================================================================
@@ -73,9 +79,9 @@ interface IContent:
 # ============================================================================
 
 MAX_CONTENTS: constant(uint256) = 1000         # Top 1000 content registry
-MAX_IMAGE_SIZE: constant(uint256) = 12288      # 64×64×3 RGB
+MAX_IMAGE_SIZE: constant(uint256) = 16384      # 16KB RGB (5,461 pixels max)
 MAX_TEXT_SIZE: constant(uint256) = 16384       # 16KB UTF-8
-MAX_IMAGE_DIMENSION: constant(uint256) = 64
+MAX_IMAGE_DIMENSION: constant(uint256) = 128   # Max width or height
 DEFAULT_CREATION_FEE: constant(uint256) = 0    # Free by default
 DEFAULT_COOLDOWN: constant(uint256) = 300      # 5 minutes
 
@@ -138,12 +144,12 @@ def __init__(_content_blueprint: address, _owner: address, _creation_fee: uint25
 
 @external
 @payable
-def create_image(width: uint256, height: uint256, pixel_data: Bytes[12288]) -> address:
+def create_image(width: uint256, height: uint256, pixel_data: Bytes[16384]) -> address:
     """
-    @notice Create an immutable image (up to 64×64 RGB)
-    @param width Image width in pixels (1-64)
-    @param height Image height in pixels (1-64)
-    @param pixel_data RGB pixel data in row-major order
+    @notice Create an immutable image (up to 16KB RGB, max dimensions 128×128)
+    @param width Image width in pixels (1-128)
+    @param height Image height in pixels (1-128)
+    @param pixel_data RGB pixel data in row-major order (max 16,384 bytes)
     @return Address of deployed content contract
     """
     # Validation
