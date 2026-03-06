@@ -1,8 +1,8 @@
-/// @title 128.128 Fixed-Point Add/Sub Test Contract
+/// @title FixedPoint128 Test Contract
 /// @notice Test contract for signed 128.128 fixed-point arithmetic
-/// @dev Exposes add, sub, and conversion functions for testing
+/// @dev Exposes add, sub, mul, div and conversion functions for testing
 
-#include "fp128.huff"
+#include "fixedpoint128.huff"
 
 #define macro MAIN() = takes(0) returns(0) {
     // Read function selector

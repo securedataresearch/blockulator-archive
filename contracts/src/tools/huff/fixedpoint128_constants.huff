@@ -1,4 +1,4 @@
-/// @title 128.128 Fixed-Point Constants
+/// @title FixedPoint128 Constants
 /// @notice Constants for signed fixed-point arithmetic using two's complement
 /// @dev Format: 128 integer bits + 128 fractional bits in a single uint256
 ///      Value represented = word / 2^128
