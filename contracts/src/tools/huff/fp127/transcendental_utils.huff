@@ -1,4 +1,4 @@
-/// @title FP128 Transcendental Utility Functions
+/// @title FP127 Transcendental Utility Functions
 /// @notice Additional transcendental operations built on core functions
 /// @dev Requires: constants.huff, arithmetic.huff, log2.huff, exp.huff, sqrt.huff
 
@@ -7,10 +7,10 @@
 // ============================================================================
 
 // log2(10) in 128.128 format ≈ 3.321928094887362347870319429489390175864831393024580612054756395815934776608
-#define constant LOG2_10_FP128 = 0x000000000000000000000000000000035269e12f346e2bf924afdbfd36bf6d33
+#define constant LOG2_10_FP127 = 0x000000000000000000000000000000035269e12f346e2bf924afdbfd36bf6d33
 
 // 1/log2(10) in 128.128 format ≈ 0.301029995663981195213738894724493026768189881462108541310427461127108189274
-#define constant INV_LOG2_10_FP128 = 0x000000000000000000000000000000004d104d427de7fbcc47c4acd605be48bc
+#define constant INV_LOG2_10_FP127 = 0x000000000000000000000000000000004d104d427de7fbcc47c4acd605be48bc
 
 // ============================================================================
 // Geometric Mean
@@ -23,15 +23,15 @@
 /// Formula: gavg(a, b) = sqrt(a * b)
 /// Gas: ~600-700 (mul + sqrt)
 /// Note: Both inputs should be non-negative for real result
-#define macro FP128_GAVG() = takes(2) returns(1) {
+#define macro FP127_GAVG() = takes(2) returns(1) {
     // Stack: [b, a]
-    FP128_MUL()                // [a * b]
-    FP128_SQRT()               // [sqrt(a * b)]
+    FP127_MUL()                // [a * b]
+    FP127_SQRT()               // [sqrt(a * b)]
 }
 
 // Alias for compatibility with Solady naming
-#define macro FP128_MUL_SQRT() = takes(2) returns(1) {
-    FP128_GAVG()
+#define macro FP127_MUL_SQRT() = takes(2) returns(1) {
+    FP127_GAVG()
 }
 
 // ============================================================================
@@ -45,11 +45,11 @@
 /// Formula: log10(x) = log2(x) / log2(10)
 /// Gas: ~1100-1200 (log2 + mul)
 /// Precision: ~38 decimal digits (inherits from log2)
-#define macro FP128_LOG10() = takes(1) returns(1) {
+#define macro FP127_LOG10() = takes(1) returns(1) {
     // Stack: [x]
-    FP128_LOG2()               // [log2(x)]
-    [INV_LOG2_10_FP128]        // [1/log2(10), log2(x)]
-    FP128_MUL()                // [log10(x)]
+    FP127_LOG2()               // [log2(x)]
+    [INV_LOG2_10_FP127]        // [1/log2(10), log2(x)]
+    FP127_MUL()                // [log10(x)]
 }
 
 // ============================================================================
@@ -65,11 +65,11 @@
 /// Precision: ~38 decimal digits (inherits from exp2)
 /// Range: x must be in range where 10^x doesn't overflow/underflow
 ///        Roughly -38 < x < 38 for safe operation
-#define macro FP128_EXP10() = takes(1) returns(1) {
+#define macro FP127_EXP10() = takes(1) returns(1) {
     // Stack: [x]
-    [LOG2_10_FP128]            // [log2(10), x]
-    FP128_MUL()                // [x * log2(10)]
-    FP128_EXP2()               // [2^(x * log2(10)) = 10^x]
+    [LOG2_10_FP127]            // [log2(10), x]
+    FP127_MUL()                // [x * log2(10)]
+    FP127_EXP2()               // [2^(x * log2(10)) = 10^x]
 }
 
 // ============================================================================
@@ -77,17 +77,17 @@
 // ============================================================================
 
 // 1/3 in 128.128 format
-#define constant ONE_THIRD_FP128 = 0x0000000000000000000000000000000055555555555555555555555555555555
+#define constant ONE_THIRD_FP127 = 0x0000000000000000000000000000000055555555555555555555555555555555
 
 /// @notice Cube root via pow(x, 1/3), handles negative inputs
 /// @dev takes(1) returns(1)
-#define macro FP128_CBRT() = takes(1) returns(1) {
+#define macro FP127_CBRT() = takes(1) returns(1) {
     dup1 iszero cbrt_zero jumpi
     dup1 IS_NEGATIVE() cbrt_negative jumpi
-    [ONE_THIRD_FP128] FP128_POW()
+    [ONE_THIRD_FP127] FP127_POW()
     cbrt_done jump
     cbrt_negative:
-    FP128_ABS() [ONE_THIRD_FP128] FP128_POW() NEGATE()
+    FP127_ABS() [ONE_THIRD_FP127] FP127_POW() NEGATE()
     cbrt_done jump
     cbrt_zero:
     cbrt_done:
@@ -99,8 +99,8 @@
 
 /// @notice ceil(log2(x)) for positive x
 /// @dev takes(1) returns(1)
-#define macro FP128_LOG2_UP() = takes(1) returns(1) {
-    FP128_LOG2() FP128_CEIL()
+#define macro FP127_LOG2_UP() = takes(1) returns(1) {
+    FP127_LOG2() FP127_CEIL()
 }
 
 // ============================================================================
@@ -150,21 +150,21 @@
 /// Gas: ~3300-3800 per step (1 exp, 3 muls, 2 divs, adds)
 #define macro LAMBERTW0_FSC_STEP() = takes(2) returns(2) {
     // [x, w]
-    dup2 [ONE_FP128] add          // [wp1, x, w]             wp1 = w + 1
-    dup3 FP128_EXP()              // [ew, wp1, x, w]
-    dup4 dup2 FP128_MUL()         // [wew, ew, wp1, x, w]    wew = w * e^w
-    dup4 FP128_SUB()              // [s, ew, wp1, x, w]      s = w*e^w - x
-    swap1 dup3 FP128_MUL()        // [ew_wp1, s, wp1, x, w]  denom = e^w * (w+1)
+    dup2 [ONE_FP127] add          // [wp1, x, w]             wp1 = w + 1
+    dup3 FP127_EXP()              // [ew, wp1, x, w]
+    dup4 dup2 FP127_MUL()         // [wew, ew, wp1, x, w]    wew = w * e^w
+    dup4 FP127_SUB()              // [s, ew, wp1, x, w]      s = w*e^w - x
+    swap1 dup3 FP127_MUL()        // [ew_wp1, s, wp1, x, w]  denom = e^w * (w+1)
 
     // r = s / denom: DIV takes [b, a] returns a/b, need [ew_wp1, s]
-    FP128_DIV()                   // [r, wp1, x, w]          r = s / denom
+    FP127_DIV()                   // [r, wp1, x, w]          r = s / denom
 
     // FSC correction: r_fsc = r * (1 + r / (2*(w+1)))
     dup1                          // [r, r, wp1, x, w]
     dup3 0x01 shl                 // [2*wp1, r, r, wp1, x, w]
-    FP128_DIV()                   // [r/(2*wp1), r, wp1, x, w]
-    [ONE_FP128] add               // [1+r/(2*wp1), r, wp1, x, w]
-    FP128_MUL()                   // [r_fsc, wp1, x, w]
+    FP127_DIV()                   // [r/(2*wp1), r, wp1, x, w]
+    [ONE_FP127] add               // [1+r/(2*wp1), r, wp1, x, w]
+    FP127_MUL()                   // [r_fsc, wp1, x, w]
 
     // Stack: [r_fsc, wp1, x, w]
     // Goal:  [x, w - r_fsc]
@@ -184,30 +184,30 @@
 /// Gas: ~4100 per step (1 exp, 5 muls, 2 divs, adds)
 #define macro LAMBERTW0_FSC_STEP_INIT() = takes(2) returns(3) {
     // [x, w]
-    dup2 [ONE_FP128] add          // [wp1, x, w]
-    dup3 FP128_EXP()              // [ew, wp1, x, w]
-    dup4 dup2 FP128_MUL()         // [wew, ew, wp1, x, w]
-    dup4 FP128_SUB()              // [s, ew, wp1, x, w]
+    dup2 [ONE_FP127] add          // [wp1, x, w]
+    dup3 FP127_EXP()              // [ew, wp1, x, w]
+    dup4 dup2 FP127_MUL()         // [wew, ew, wp1, x, w]
+    dup4 FP127_SUB()              // [s, ew, wp1, x, w]
 
     swap1 dup1                    // [ew, ew, s, wp1, x, w]
-    dup4 FP128_MUL()              // [ew_wp1, ew, s, wp1, x, w]
+    dup4 FP127_MUL()              // [ew_wp1, ew, s, wp1, x, w]
     swap1 swap2 swap1             // [ew_wp1, s, ew, wp1, x, w]
 
-    FP128_DIV()                   // [r, ew, wp1, x, w]
+    FP127_DIV()                   // [r, ew, wp1, x, w]
 
     dup1                          // [r, r, ew, wp1, x, w]
     dup4 0x01 shl                 // [2*wp1, r, r, ew, wp1, x, w]
-    FP128_DIV()                   // [r/(2*wp1), r, ew, wp1, x, w]
-    [ONE_FP128] add               // [1+r/(2*wp1), r, ew, wp1, x, w]
-    FP128_MUL()                   // [r_fsc, ew, wp1, x, w]
+    FP127_DIV()                   // [r/(2*wp1), r, ew, wp1, x, w]
+    [ONE_FP127] add               // [1+r/(2*wp1), r, ew, wp1, x, w]
+    FP127_MUL()                   // [r_fsc, ew, wp1, x, w]
 
     // ew_new = ew * (1 - r_fsc + r_fsc^2/2)
-    dup1 dup1 FP128_MUL()         // [r2, r_fsc, ew, wp1, x, w]
+    dup1 dup1 FP127_MUL()         // [r2, r_fsc, ew, wp1, x, w]
     0x01 shr                      // [r2/2, r_fsc, ew, wp1, x, w]
-    [ONE_FP128] add               // [1+r2/2, r_fsc, ew, wp1, x, w]
+    [ONE_FP127] add               // [1+r2/2, r_fsc, ew, wp1, x, w]
     swap1 dup1 swap2              // [1+r2/2, r_fsc, r_fsc, ew, wp1, x, w]
     sub                           // [corr, r_fsc, ew, wp1, x, w]
-    dup3 FP128_MUL()              // [ew_new, r_fsc, ew, wp1, x, w]
+    dup3 FP127_MUL()              // [ew_new, r_fsc, ew, wp1, x, w]
 
     // w_new = w - r_fsc
     swap1 dup6 sub                // [w_new, ew_new, ew, wp1, x, w]
@@ -225,32 +225,32 @@
 /// @dev takes(3) returns(3)
 /// Stack input:  [x, w, ew] where ew is approximate e^w from previous step
 /// Stack output: [x, w_new, ew_new]
-/// Same FSC formula but uses provided ew instead of calling FP128_EXP.
+/// Same FSC formula but uses provided ew instead of calling FP127_EXP.
 /// ew_new = ew * (1 - r_fsc + r_fsc^2/2)
-/// Gas: ~1600 per step (5 muls, 2 divs, adds) - saves ~2200 gas vs FP128_EXP
+/// Gas: ~1600 per step (5 muls, 2 divs, adds) - saves ~2200 gas vs FP127_EXP
 #define macro LAMBERTW0_FSC_STEP_REUSE() = takes(3) returns(3) {
     // [x, w, ew]
-    dup2 [ONE_FP128] add          // [wp1, x, w, ew]
+    dup2 [ONE_FP127] add          // [wp1, x, w, ew]
     dup4                          // [ew, wp1, x, w, ew]
-    dup4 dup2 FP128_MUL()         // [wew, ew, wp1, x, w, ew]
-    dup4 FP128_SUB()              // [s, ew, wp1, x, w, ew]
-    swap1 dup3 FP128_MUL()        // [ew_wp1, s, wp1, x, w, ew]
+    dup4 dup2 FP127_MUL()         // [wew, ew, wp1, x, w, ew]
+    dup4 FP127_SUB()              // [s, ew, wp1, x, w, ew]
+    swap1 dup3 FP127_MUL()        // [ew_wp1, s, wp1, x, w, ew]
 
-    FP128_DIV()                   // [r, wp1, x, w, ew]
+    FP127_DIV()                   // [r, wp1, x, w, ew]
 
     dup1                          // [r, r, wp1, x, w, ew]
     dup3 0x01 shl                 // [2*wp1, r, r, wp1, x, w, ew]
-    FP128_DIV()                   // [r/(2*wp1), r, wp1, x, w, ew]
-    [ONE_FP128] add               // [1+r/(2*wp1), r, wp1, x, w, ew]
-    FP128_MUL()                   // [r_fsc, wp1, x, w, ew]
+    FP127_DIV()                   // [r/(2*wp1), r, wp1, x, w, ew]
+    [ONE_FP127] add               // [1+r/(2*wp1), r, wp1, x, w, ew]
+    FP127_MUL()                   // [r_fsc, wp1, x, w, ew]
 
     // ew_new = ew * (1 - r_fsc + r_fsc^2/2)
-    dup1 dup1 FP128_MUL()         // [r2, r_fsc, wp1, x, w, ew]
+    dup1 dup1 FP127_MUL()         // [r2, r_fsc, wp1, x, w, ew]
     0x01 shr                      // [r2/2, r_fsc, wp1, x, w, ew]
-    [ONE_FP128] add               // [1+r2/2, r_fsc, wp1, x, w, ew]
+    [ONE_FP127] add               // [1+r2/2, r_fsc, wp1, x, w, ew]
     swap1 dup1 swap2              // [1+r2/2, r_fsc, r_fsc, wp1, x, w, ew]
     sub                           // [corr, r_fsc, wp1, x, w, ew]
-    dup6 FP128_MUL()              // [ew_new, r_fsc, wp1, x, w, ew]
+    dup6 FP127_MUL()              // [ew_new, r_fsc, wp1, x, w, ew]
 
     // w_new = w - r_fsc
     swap1 dup5 sub                // [w_new, ew_new, wp1, x, w, ew]
@@ -279,9 +279,9 @@
 ///               via ew_new = ew * (1 - r_fsc + r_fsc^2/2), saving ~4,400 gas
 /// Gas: ~24,000-29,000 (3 full FSC + 2 reuse steps)
 /// Precision: ~22 mean digits across diverse inputs (38 for small/negative, 7-15 for large)
-#define fn FP128_LAMBERT_W0() = takes(1) returns(1) {
+#define fn FP127_LAMBERT_W0() = takes(1) returns(1) {
     // Domain check: x >= -1/e
-    dup1 [INV_E_FP128] FP128_NEG() swap1 slt
+    dup1 [INV_E_FP127] FP127_NEG() swap1 slt
     lambertw0_domain_error jumpi
 
     // Zero check
@@ -306,10 +306,10 @@
 
     lambertw0_large:
     pop
-    dup1 FP128_LN() dup1 FP128_LN() FP128_SUB()
+    dup1 FP127_LN() dup1 FP127_LN() FP127_SUB()
 
     lambertw0_iterate:
-    // Steps 1-3: full FSC with exact FP128_EXP (quartic: ~8->16->64->128+ bits)
+    // Steps 1-3: full FSC with exact FP127_EXP (quartic: ~8->16->64->128+ bits)
     // Steps 4-5: reuse ew (r_fsc ~ 2^-128, approximation error is negligible)
     swap1
     LAMBERTW0_FSC_STEP_INIT()

@@ -1,4 +1,4 @@
-/// @title FP128 Utility Functions
+/// @title FP127 Utility Functions
 /// @notice Utility operations for 128.128 fixed-point arithmetic
 /// @dev Simple operations like abs, min, max, avg, etc.
 /// @dev Requires: constants.huff and primitives.huff must be included before this file
@@ -13,7 +13,7 @@
 /// Stack output: [|x|]
 /// Formula: abs(x) = x < 0 ? -x : x
 /// Gas: ~8 opcodes
-#define macro FP128_ABS() = takes(1) returns(1) {
+#define macro FP127_ABS() = takes(1) returns(1) {
     // mask = x >> 255 (all 1s if negative, all 0s if positive)
     // abs = (x ^ mask) - mask
     dup1 0xff sar              // [mask, x]
@@ -27,7 +27,7 @@
 /// Stack input:  [x]
 /// Stack output: [-x]
 /// Gas: ~3 opcodes
-#define macro FP128_NEG() = takes(1) returns(1) {
+#define macro FP127_NEG() = takes(1) returns(1) {
     NEGATE()
 }
 
@@ -36,11 +36,11 @@
 /// Stack input:  [x]
 /// Stack output: [1/x]
 /// Formula: 1/x = ONE / x
-/// Gas: ~500-600 (calls FP128_DIV)
-#define macro FP128_INV() = takes(1) returns(1) {
-    [ONE_FP128]                // [1, x]
+/// Gas: ~500-600 (calls FP127_DIV)
+#define macro FP127_INV() = takes(1) returns(1) {
+    [ONE_FP127]                // [1, x]
     swap1                      // [x, 1]
-    FP128_DIV()                // [1/x]
+    FP127_DIV()                // [1/x]
 }
 
 // ============================================================================
@@ -52,7 +52,7 @@
 /// Stack input:  [b, a] (b on top)
 /// Stack output: [min(a, b)]
 /// Gas: ~10 opcodes
-#define macro FP128_MIN() = takes(2) returns(1) {
+#define macro FP127_MIN() = takes(2) returns(1) {
     // Stack: [b, a]
     dup2 dup2                  // [b, a, b, a]
     slt                        // [a < b, b, a]
@@ -69,7 +69,7 @@
 /// Stack input:  [b, a] (b on top)
 /// Stack output: [max(a, b)]
 /// Gas: ~10 opcodes
-#define macro FP128_MAX() = takes(2) returns(1) {
+#define macro FP127_MAX() = takes(2) returns(1) {
     // Stack: [b, a]
     dup2 dup2                  // [b, a, b, a]
     sgt                        // [a > b, b, a]
@@ -87,13 +87,13 @@
 /// Stack output: [clamped_x]
 /// Formula: clamp(x, lo, hi) = max(lo, min(x, hi))
 /// Gas: ~20 opcodes
-#define macro FP128_CLAMP() = takes(3) returns(1) {
+#define macro FP127_CLAMP() = takes(3) returns(1) {
     // Stack: [hi, lo, x]
     swap2                      // [x, lo, hi]
     swap1                      // [lo, x, hi]
-    FP128_MAX()                // [max(lo, x), hi]
+    FP127_MAX()                // [max(lo, x), hi]
     swap1                      // [hi, max(lo, x)]
-    FP128_MIN()                // [min(hi, max(lo, x))]
+    FP127_MIN()                // [min(hi, max(lo, x))]
 }
 
 // ============================================================================
@@ -107,7 +107,7 @@
 /// Formula: avg = (a >> 1) + (b >> 1) + (a & b & 1)
 /// This avoids overflow that would occur with (a + b) / 2
 /// Gas: ~10 opcodes
-#define macro FP128_AVG() = takes(2) returns(1) {
+#define macro FP127_AVG() = takes(2) returns(1) {
     // Stack: [b, a]
     dup2 0x01 sar              // [a>>1, b, a]
     dup2 0x01 sar              // [b>>1, a>>1, b, a]
@@ -121,9 +121,9 @@
 /// Stack input:  [b, a] (b on top)
 /// Stack output: [max(0, a - b)]
 /// Gas: ~15 opcodes
-#define macro FP128_ZERO_FLOOR_SUB() = takes(2) returns(1) {
+#define macro FP127_ZERO_FLOOR_SUB() = takes(2) returns(1) {
     // Stack: [b, a]
-    FP128_SUB()                // [a - b]
+    FP127_SUB()                // [a - b]
     dup1 IS_NEGATIVE()         // [is_neg, a-b]
     zfs_select jumpi           // [a-b]
     zfs_done jump
@@ -138,10 +138,10 @@
 /// Stack output: [|a - b|]
 /// Formula: dist(a, b) = abs(a - b)
 /// Gas: ~15 opcodes
-#define macro FP128_DIST() = takes(2) returns(1) {
+#define macro FP127_DIST() = takes(2) returns(1) {
     // Stack: [b, a]
-    FP128_SUB()                // [a - b]
-    FP128_ABS()                // [|a - b|]
+    FP127_SUB()                // [a - b]
+    FP127_ABS()                // [|a - b|]
 }
 
 // ============================================================================
@@ -151,25 +151,25 @@
 /// @notice Sign of a signed 128.128 fixed-point number
 /// @dev takes(1) returns(1)
 /// Stack input:  [x]
-/// Stack output: [-1 if x < 0, 0 if x == 0, +1 if x > 0] (in FP128 format)
-/// Formula: sign(x) = (x > 0) - (x < 0), scaled to FP128
+/// Stack output: [-1 if x < 0, 0 if x == 0, +1 if x > 0] (in FP127 format)
+/// Formula: sign(x) = (x > 0) - (x < 0), scaled to FP127
 /// Gas: ~10 opcodes
-#define macro FP128_SIGN() = takes(1) returns(1) {
+#define macro FP127_SIGN() = takes(1) returns(1) {
     // Stack: [x]
     dup1 0x00 sgt              // [x > 0, x]
     swap1 0x00 slt             // [x < 0, x > 0]
     sub                        // [(x > 0) - (x < 0)]
-    [FP128_SHIFT] shl          // [sign << 128] = sign in FP128
+    [FP127_SHIFT] shl          // [sign << 128] = sign in FP127
 }
 
 /// @notice Floor of a signed 128.128 fixed-point number
 /// @dev takes(1) returns(1)
 /// Stack input:  [x]
-/// Stack output: [floor(x)] (largest integer <= x, in FP128 format)
+/// Stack output: [floor(x)] (largest integer <= x, in FP127 format)
 /// Formula: Mask off fractional bits, adjust for negative non-integers
 /// Gas: ~15 opcodes
 /// @dev Converted to function to save bytecode (called by ceil, frac)
-#define fn FP128_FLOOR() = takes(1) returns(1) {
+#define fn FP127_FLOOR() = takes(1) returns(1) {
     // In two's complement, AND with INT_MASK (zeroing fractional bits)
     // always rounds toward -infinity, which IS floor for both positive and negative.
     [INT_MASK] and
@@ -178,13 +178,13 @@
 /// @notice Ceiling of a signed 128.128 fixed-point number
 /// @dev takes(1) returns(1)
 /// Stack input:  [x]
-/// Stack output: [ceil(x)] (smallest integer >= x, in FP128 format)
+/// Stack output: [ceil(x)] (smallest integer >= x, in FP127 format)
 /// Formula: ceil(x) = -floor(-x)
 /// Gas: ~20 opcodes
-#define macro FP128_CEIL() = takes(1) returns(1) {
+#define macro FP127_CEIL() = takes(1) returns(1) {
     // Stack: [x]
     NEGATE()                   // [-x]
-    FP128_FLOOR()              // [floor(-x)]
+    FP127_FLOOR()              // [floor(-x)]
     NEGATE()                   // [-floor(-x) = ceil(x)]
 }
 
@@ -194,7 +194,7 @@
 /// Stack output: [frac(x)] (x - floor(x), always non-negative)
 /// Formula: frac(x) = x - floor(x)
 /// Gas: ~20 opcodes
-#define macro FP128_FRAC() = takes(1) returns(1) {
+#define macro FP127_FRAC() = takes(1) returns(1) {
     // frac(x) = x & FRAC_MASK (lower 128 bits are the fractional part)
     [FRAC_MASK] and
 }
@@ -202,13 +202,13 @@
 /// @notice Round to nearest integer (banker's rounding: half up)
 /// @dev takes(1) returns(1)
 /// Stack input:  [x]
-/// Stack output: [round(x)] (nearest integer to x, in FP128 format)
+/// Stack output: [round(x)] (nearest integer to x, in FP127 format)
 /// Formula: round(x) = floor(x + 0.5)
 /// Gas: ~20 opcodes
-#define macro FP128_ROUND() = takes(1) returns(1) {
+#define macro FP127_ROUND() = takes(1) returns(1) {
     // Stack: [x]
-    [HALF_FP128] add           // [x + 0.5]
-    FP128_FLOOR()              // [floor(x + 0.5)]
+    [HALF_FP127] add           // [x + 0.5]
+    FP127_FLOOR()              // [floor(x + 0.5)]
 }
 
 // ============================================================================
@@ -223,15 +223,15 @@
 /// Gas: ~150 opcodes (sub + mul + add)
 /// Note: t is typically in [0, 1] but not enforced
 /// @dev Converted to function to save bytecode
-#define fn FP128_LERP() = takes(3) returns(1) {
+#define fn FP127_LERP() = takes(3) returns(1) {
     // Stack: [t, b, a]
     swap2                      // [a, b, t]
     dup2 dup2                  // [a, b, a, b, t]
-    FP128_SUB()                // [b - a, a, b, t]
+    FP127_SUB()                // [b - a, a, b, t]
     dup4                       // [t, b - a, a, b, t]
-    FP128_MUL()                // [t * (b - a), a, b, t]
+    FP127_MUL()                // [t * (b - a), a, b, t]
     swap1                      // [a, t * (b - a), b, t]
-    FP128_ADD()                // [a + t * (b - a), b, t]
+    FP127_ADD()                // [a + t * (b - a), b, t]
     swap2 pop pop              // [result]
 }
 
@@ -242,16 +242,16 @@
 /// Formula: hypot(a, b) = sqrt(a^2 + b^2)
 /// Gas: ~1800 (2 muls + add + sqrt)
 /// @dev Converted to function to save bytecode
-#define fn FP128_HYPOT() = takes(2) returns(1) {
+#define fn FP127_HYPOT() = takes(2) returns(1) {
     // Stack: [b, a]
     swap1                      // [a, b]
     dup1                       // [a, a, b]
-    FP128_MUL()                // [a^2, b]
+    FP127_MUL()                // [a^2, b]
     swap1                      // [b, a^2]
     dup1                       // [b, b, a^2]
-    FP128_MUL()                // [b^2, a^2]
-    FP128_ADD()                // [a^2 + b^2]
-    FP128_SQRT()               // [sqrt(a^2 + b^2)]
+    FP127_MUL()                // [b^2, a^2]
+    FP127_ADD()                // [a^2 + b^2]
+    FP127_SQRT()               // [sqrt(a^2 + b^2)]
 }
 
 // ============================================================================
@@ -260,17 +260,17 @@
 
 /// @notice Greatest common divisor using Euclidean algorithm
 /// @dev takes(2) returns(1)
-/// Stack input:  [b, a] (b on top) - FP128 values
-/// Stack output: [gcd(floor(a), floor(b))] (as FP128 integer)
+/// Stack input:  [b, a] (b on top) - FP127 values
+/// Stack output: [gcd(floor(a), floor(b))] (as FP127 integer)
 /// Formula: Euclidean algorithm on integer parts
 /// Gas: ~50-200 depending on input values
 /// Note: Operates on absolute values of integer parts
-#define macro FP128_GCD() = takes(2) returns(1) {
+#define macro FP127_GCD() = takes(2) returns(1) {
     // Stack: [b, a]
     // Extract integer parts and shift to actual integers
-    [FP128_SHIFT] shr          // [b_int, a]
+    [FP127_SHIFT] shr          // [b_int, a]
     swap1                      // [a, b_int]
-    [FP128_SHIFT] shr          // [a_int, b_int]
+    [FP127_SHIFT] shr          // [a_int, b_int]
     
     // Take absolute values (simple: if negative, negate)
     dup1 0x8000000000000000000000000000000000000000000000000000000000000000 and iszero gcd_a_pos jumpi
@@ -294,7 +294,7 @@
     gcd_done:
     // Stack: [gcd_int, 0]
     swap1 pop                  // [gcd_int]
-    [FP128_SHIFT] shl          // [gcd in FP128 format]
+    [FP127_SHIFT] shl          // [gcd in FP127 format]
 }
 
 // ============================================================================
@@ -303,14 +303,14 @@
 
 /// @notice Factorial function using jump table
 /// @dev takes(1) returns(1)
-/// Stack input:  [n] (FP128 format, will be floored to integer)
-/// Stack output: [n!] (FP128 format)
+/// Stack input:  [n] (FP127 format, will be floored to integer)
+/// Stack output: [n!] (FP127 format)
 /// Domain: n in [0, 33] (34! overflows uint256)
 /// Gas: ~50-100 (jump table lookup)
-#define macro FP128_FACTORIAL() = takes(1) returns(1) {
+#define macro FP127_FACTORIAL() = takes(1) returns(1) {
     // Stack: [n]
     // Extract integer part and bounds check
-    [FP128_SHIFT] shr          // [n_int]
+    [FP127_SHIFT] shr          // [n_int]
     
     // Bounds check
     0x21 dup2 gt factorial_overflow jumpi  // if n > 33, overflow

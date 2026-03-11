@@ -1,4 +1,4 @@
-/// @title FP128 Natural Logarithm
+/// @title FP127 Natural Logarithm
 /// @notice ln(x) for 128.128 fixed-point arithmetic using log2-based algorithm
 /// @dev Requires: log2.huff and arithmetic.huff must be included before this file
 ///
@@ -12,15 +12,15 @@
 /// @dev takes(1) returns(1)
 /// Stack input:  [x] (128.128 format, must be > 0)
 /// Stack output: [ln(x)] (128.128 format, signed)
-/// Note: Guards (zero, negative, x==1) are handled inside FP128_LOG2
-#define macro FP128_LN() = takes(1) returns(1) {
-    FP128_LOG2()               // [log2(x)]
+/// Note: Guards (zero, negative, x==1) are handled inside FP127_LOG2
+#define macro FP127_LN() = takes(1) returns(1) {
+    FP127_LOG2()               // [log2(x)]
     
     // log2 returns 0 for x==1, x==0, x<0 -- check if we got 0
     dup1 iszero ln_zero jumpi
     
-    [LN2_FP128]                // [LN2, log2(x)]
-    FP128_MUL()                // [ln(x)]
+    [LN2_FP127]                // [LN2, log2(x)]
+    FP127_MUL()                // [ln(x)]
     ln_done jump
     
     ln_zero:

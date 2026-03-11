@@ -1,4 +1,4 @@
-/// @title FixedPoint128 Test Contract
+/// @title FixedPoint127 Test Contract
 /// @notice Test contract for signed 128.128 fixed-point arithmetic
 /// @dev Exposes add, sub, mul, div, exp, ln, sqrt and conversion functions for testing
 
@@ -106,11 +106,11 @@
         pop
         // Read two fixed18 args, convert, add, convert back
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_ADD()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_ADD()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -118,11 +118,11 @@
         pop
         // Read two fixed18 args, convert, subtract, convert back
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_SUB()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_SUB()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -130,11 +130,11 @@
         pop
         // Read two fixed18 args, convert, multiply, convert back
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_MUL()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_MUL()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -142,43 +142,43 @@
         pop
         // Read two fixed18 args, convert, divide, convert back
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_DIV()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_DIV()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     mul_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_MUL()            // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_MUL()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     div_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_DIV()            // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_DIV()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     from_jump:
         pop
-        // Convert fixed18 to fp128 (for debugging)
+        // Convert fixed18 to fp127 (for debugging)
         0x04 calldataload      // [fixed18]
-        FP128_FROM_FIXED18()   // [fp128]
+        FP127_FROM_FIXED18()   // [fp127]
         0x00 mstore
         0x20 0x00 return
     
     to_jump:
         pop
-        // Convert fp128 to fixed18 (for debugging)
-        0x04 calldataload      // [fp128]
-        FP128_TO_FIXED18()     // [fixed18]
+        // Convert fp127 to fixed18 (for debugging)
+        0x04 calldataload      // [fp127]
+        FP127_TO_FIXED18()     // [fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -186,9 +186,9 @@
         pop
         // Compute exp(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_EXP()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_EXP()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -196,9 +196,9 @@
         pop
         // Compute exp2(x) = 2^x with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_EXP2()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_EXP2()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -206,9 +206,9 @@
         pop
         // Compute ln(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_LN()             // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_LN()             // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -216,9 +216,9 @@
         pop
         // Compute log2(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_LOG2()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_LOG2()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -226,52 +226,52 @@
         pop
         // Compute sqrt(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_SQRT()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_SQRT()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     sqrt_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_SQRT()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_SQRT()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     exp_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
+        0x04 calldataload      // [x_fp127]
         dup1                   // Debug: duplicate input
         0x40 mstore            // Store input at 0x40 for debugging
-        FP128_EXP()            // [result_fp128]
+        FP127_EXP()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     ln_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_LN()             // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_LN()             // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     log2_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_LOG2()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_LOG2()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     exp2_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_EXP2()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_EXP2()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     exp_overflow_check_jump:
         pop
-        // Isolate overflow check: input x_fp128, output 1 if x > 88 else 0
+        // Isolate overflow check: input x_fp127, output 1 if x > 88 else 0
         0x04 calldataload      // [x]
         [EXP_OVERFLOW_THRESHOLD]  // [THRESH, x]
         dup2                   // [x, THRESH, x]
@@ -282,7 +282,7 @@
     
     exp_scale_jump:
         pop
-        // Test scaling: input acc_fp128 at 0x04, k_int at 0x24
+        // Test scaling: input acc_fp127 at 0x04, k_int at 0x24
         0x04 calldataload      // [acc]
         0x24 calldataload      // [k_int, acc]
         
@@ -301,15 +301,15 @@
     test_constant_jump:
         pop
         // Just return a known constant to verify dispatch works
-        [ONE_FP128]            // [ONE_FP128]
+        [ONE_FP127]            // [ONE_FP127]
         0x00 mstore
         0x20 0x00 return
     
     div_unsigned_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_DIV_UNSIGNED()   // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_DIV_UNSIGNED()   // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -317,19 +317,19 @@
         pop
         // Compute pow(x, y) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        0x24 calldataload      // [y_fixed18, x_fp128]
-        FP128_FROM_FIXED18()   // [y_fp128, x_fp128]
-        FP128_POW()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        0x24 calldataload      // [y_fixed18, x_fp127]
+        FP127_FROM_FIXED18()   // [y_fp127, x_fp127]
+        FP127_POW()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     pow_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        0x24 calldataload      // [y_fp128, x_fp128]
-        FP128_POW()            // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        0x24 calldataload      // [y_fp127, x_fp127]
+        FP127_POW()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -337,9 +337,9 @@
         pop
         // Compute abs(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_ABS()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_ABS()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -347,9 +347,9 @@
         pop
         // Compute neg(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_NEG()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_NEG()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -357,9 +357,9 @@
         pop
         // Compute inv(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_INV()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_INV()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -367,11 +367,11 @@
         pop
         // Compute min(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_MIN()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_MIN()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -379,11 +379,11 @@
         pop
         // Compute max(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_MAX()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_MAX()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -391,13 +391,13 @@
         pop
         // Compute clamp(x, lo, hi) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        0x24 calldataload      // [lo_fixed18, x_fp128]
-        FP128_FROM_FIXED18()   // [lo_fp128, x_fp128]
-        0x44 calldataload      // [hi_fixed18, lo_fp128, x_fp128]
-        FP128_FROM_FIXED18()   // [hi_fp128, lo_fp128, x_fp128]
-        FP128_CLAMP()          // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        0x24 calldataload      // [lo_fixed18, x_fp127]
+        FP127_FROM_FIXED18()   // [lo_fp127, x_fp127]
+        0x44 calldataload      // [hi_fixed18, lo_fp127, x_fp127]
+        FP127_FROM_FIXED18()   // [hi_fp127, lo_fp127, x_fp127]
+        FP127_CLAMP()          // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -405,11 +405,11 @@
         pop
         // Compute avg(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_AVG()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_AVG()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -417,11 +417,11 @@
         pop
         // Compute zeroFloorSub(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_ZERO_FLOOR_SUB() // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_ZERO_FLOOR_SUB() // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -429,11 +429,11 @@
         pop
         // Compute dist(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_DIST()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_DIST()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -441,11 +441,11 @@
         pop
         // Compute gavg(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_GAVG()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_GAVG()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -453,9 +453,9 @@
         pop
         // Compute log10(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_LOG10()          // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_LOG10()          // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -463,101 +463,101 @@
         pop
         // Compute exp10(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_EXP10()          // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_EXP10()          // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     abs_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_ABS()            // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_ABS()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     neg_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_NEG()            // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_NEG()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     inv_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_INV()            // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_INV()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     min_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_MIN()            // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_MIN()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     max_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_MAX()            // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_MAX()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     clamp_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        0x24 calldataload      // [lo_fp128, x_fp128]
-        0x44 calldataload      // [hi_fp128, lo_fp128, x_fp128]
-        FP128_CLAMP()          // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        0x24 calldataload      // [lo_fp127, x_fp127]
+        0x44 calldataload      // [hi_fp127, lo_fp127, x_fp127]
+        FP127_CLAMP()          // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     avg_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_AVG()            // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_AVG()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     zeroFloorSub_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_ZERO_FLOOR_SUB() // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_ZERO_FLOOR_SUB() // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     dist_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_DIST()           // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_DIST()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     gavg_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_GAVG()           // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_GAVG()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     log10_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_LOG10()          // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_LOG10()          // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     exp10_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_EXP10()          // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_EXP10()          // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -565,9 +565,9 @@
         pop
         // Compute sign(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_SIGN()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_SIGN()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -575,9 +575,9 @@
         pop
         // Compute floor(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_FLOOR()          // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_FLOOR()          // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -585,9 +585,9 @@
         pop
         // Compute ceil(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_CEIL()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_CEIL()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -595,9 +595,9 @@
         pop
         // Compute frac(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_FRAC()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_FRAC()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -605,9 +605,9 @@
         pop
         // Compute cbrt(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_CBRT()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_CBRT()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -615,13 +615,13 @@
         pop
         // Compute lerp(a, b, t) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        0x44 calldataload      // [t_fixed18, b_fp128, a_fp128]
-        FP128_FROM_FIXED18()   // [t_fp128, b_fp128, a_fp128]
-        FP128_LERP()           // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        0x44 calldataload      // [t_fixed18, b_fp127, a_fp127]
+        FP127_FROM_FIXED18()   // [t_fp127, b_fp127, a_fp127]
+        FP127_LERP()           // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
@@ -629,63 +629,63 @@
         pop
         // Compute hypot(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_HYPOT()          // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_HYPOT()          // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     sign_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_SIGN()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_SIGN()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     floor_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_FLOOR()          // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_FLOOR()          // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     ceil_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_CEIL()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_CEIL()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     frac_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_FRAC()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_FRAC()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     cbrt_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_CBRT()           // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_CBRT()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     lerp_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        0x44 calldataload      // [t_fp128, b_fp128, a_fp128]
-        FP128_LERP()           // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        0x44 calldataload      // [t_fp127, b_fp127, a_fp127]
+        FP127_LERP()           // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     hypot_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_HYPOT()          // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_HYPOT()          // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -693,16 +693,16 @@
         pop
         // Compute round(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_ROUND()          // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_ROUND()          // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     round_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_ROUND()          // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_ROUND()          // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -710,16 +710,16 @@
         pop
         // Compute log2Up(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_LOG2_UP()        // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_LOG2_UP()        // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     log2up_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_LOG2_UP()        // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_LOG2_UP()        // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -727,19 +727,19 @@
         pop
         // Compute gcd(a, b) with fixed18 I/O
         0x04 calldataload      // [a_fixed18]
-        FP128_FROM_FIXED18()   // [a_fp128]
-        0x24 calldataload      // [b_fixed18, a_fp128]
-        FP128_FROM_FIXED18()   // [b_fp128, a_fp128]
-        FP128_GCD()            // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [a_fp127]
+        0x24 calldataload      // [b_fixed18, a_fp127]
+        FP127_FROM_FIXED18()   // [b_fp127, a_fp127]
+        FP127_GCD()            // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     gcd_raw_jump:
         pop
-        0x04 calldataload      // [a_fp128]
-        0x24 calldataload      // [b_fp128, a_fp128]
-        FP128_GCD()            // [result_fp128]
+        0x04 calldataload      // [a_fp127]
+        0x24 calldataload      // [b_fp127, a_fp127]
+        FP127_GCD()            // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -747,16 +747,16 @@
         pop
         // Compute factorial(n) with fixed18 I/O
         0x04 calldataload      // [n_fixed18]
-        FP128_FROM_FIXED18()   // [n_fp128]
-        FP128_FACTORIAL()      // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [n_fp127]
+        FP127_FACTORIAL()      // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     factorial_raw_jump:
         pop
-        0x04 calldataload      // [n_fp128]
-        FP128_FACTORIAL()      // [result_fp128]
+        0x04 calldataload      // [n_fp127]
+        FP127_FACTORIAL()      // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
@@ -764,23 +764,23 @@
         pop
         // Compute lambertW0(x) with fixed18 I/O
         0x04 calldataload      // [x_fixed18]
-        FP128_FROM_FIXED18()   // [x_fp128]
-        FP128_LAMBERT_W0()     // [result_fp128]
-        FP128_TO_FIXED18()     // [result_fixed18]
+        FP127_FROM_FIXED18()   // [x_fp127]
+        FP127_LAMBERT_W0()     // [result_fp127]
+        FP127_TO_FIXED18()     // [result_fixed18]
         0x00 mstore
         0x20 0x00 return
     
     lambertw0_raw_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        FP128_LAMBERT_W0()     // [result_fp128]
+        0x04 calldataload      // [x_fp127]
+        FP127_LAMBERT_W0()     // [result_fp127]
         0x00 mstore
         0x20 0x00 return
     
     lambertw0_guess_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        // Replicate initial guess logic from FP128_LAMBERT_W0
+        0x04 calldataload      // [x_fp127]
+        // Replicate initial guess logic from FP127_LAMBERT_W0
         dup1 iszero guess_zero jumpi
         dup1 MSB()             // [msb, x]
         dup1 0x80 gt guess_tiny jumpi
@@ -794,7 +794,7 @@
         guess_done jump
         guess_large:
         pop                    // [x]
-        dup1 FP128_LN() dup1 FP128_LN() FP128_SUB()  // [w0]
+        dup1 FP127_LN() dup1 FP127_LN() FP127_SUB()  // [w0]
         guess_done jump
         guess_zero:
         guess_done:
@@ -803,7 +803,7 @@
 
     lambertw0_checkpoint_s_jump:
         pop
-        0x04 calldataload      // [x_fp128]
+        0x04 calldataload      // [x_fp127]
         // Get initial guess using flat LUT
         dup1 iszero chk_s_zero jumpi
         dup1 MSB()
@@ -816,7 +816,7 @@
         chk_s_have_w0 jump
         chk_s_large:
         pop
-        dup1 FP128_LN() dup1 FP128_LN() FP128_SUB()
+        dup1 FP127_LN() dup1 FP127_LN() FP127_SUB()
         chk_s_have_w0 jump
         chk_s_zero:
         0x00 dup1 dup1 dup1
@@ -825,9 +825,9 @@
         // Stack: [w0, x]
         swap1                  // [x, w0]
         // Compute s = w*e^w - x
-        dup2 FP128_EXP()       // [ew, x, w]
-        dup3 dup2 FP128_MUL()  // [we, ew, x, w]
-        dup3 FP128_SUB()       // [s, ew, x, w]
+        dup2 FP127_EXP()       // [ew, x, w]
+        dup3 dup2 FP127_MUL()  // [we, ew, x, w]
+        dup3 FP127_SUB()       // [s, ew, x, w]
         // Return [w, x, ew, s]
         chk_s_done:
         // Stack: [s, ew, x, w] or [0, 0, 0, 0]
@@ -838,7 +838,7 @@
         0x80 0x00 return
 
     // Debug: LUT interpolation internals
-    // Returns (w0, t, W_lo, W_hi, msb) for a given FP128 input
+    // Returns (w0, t, W_lo, W_hi, msb) for a given FP127 input
     lambertw0_dbg_lut_jump:
         pop
         0x04 calldataload      // [x]
@@ -864,15 +864,15 @@
 
         dbg_lut_have_bounds:
         // Stack: [W_lo, W_hi, msb, x]
-        // Compute n = msb - 128, then t = (x >> n) - ONE_FP128
+        // Compute n = msb - 128, then t = (x >> n) - ONE_FP127
         dup3 0x80 sub          // [n, W_lo, W_hi, msb, x]
         dup5                   // [x, n, W_lo, W_hi, msb, x]
         swap1 shr              // [x>>n, W_lo, W_hi, msb, x]
-        [ONE_FP128] sub        // [t, W_lo, W_hi, msb, x]
+        [ONE_FP127] sub        // [t, W_lo, W_hi, msb, x]
 
         // Compute w0 = W_lo + t * (W_hi - W_lo)
         dup3 dup3 sub          // [W_hi-W_lo, t, W_lo, W_hi, msb, x]
-        dup2 FP128_MUL()       // [t*(W_hi-W_lo), t, W_lo, W_hi, msb, x]
+        dup2 FP127_MUL()       // [t*(W_hi-W_lo), t, W_lo, W_hi, msb, x]
         dup3 add               // [w0, t, W_lo, W_hi, msb, x]
 
         // Return (w0, t, W_lo, W_hi, msb)
@@ -938,38 +938,38 @@
         0x40 0x00 return
 
     // Debug: single FSC step internals
-    // Takes (x_fp128, w_fp128), returns (r, r_fsc, w_new)
+    // Takes (x_fp127, w_fp127), returns (r, r_fsc, w_new)
     lambertw0_dbg_fsc_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        0x24 calldataload      // [w_fp128, x_fp128]
+        0x04 calldataload      // [x_fp127]
+        0x24 calldataload      // [w_fp127, x_fp127]
 
         // Compute wp1 = w + 1
-        dup1 [ONE_FP128] add   // [wp1, w, x]
+        dup1 [ONE_FP127] add   // [wp1, w, x]
 
         // ew = e^w
-        dup2 FP128_EXP()       // [ew, wp1, w, x]
+        dup2 FP127_EXP()       // [ew, wp1, w, x]
 
         // wew = w * e^w
-        dup3 dup2 FP128_MUL()  // [wew, ew, wp1, w, x]
+        dup3 dup2 FP127_MUL()  // [wew, ew, wp1, w, x]
 
         // s = wew - x
-        dup5 FP128_SUB()       // [s, ew, wp1, w, x]
+        dup5 FP127_SUB()       // [s, ew, wp1, w, x]
 
         // denom = ew * wp1
-        swap1 dup3 FP128_MUL() // [ew_wp1, s, wp1, w, x]
+        swap1 dup3 FP127_MUL() // [ew_wp1, s, wp1, w, x]
 
         // r = s / denom
-        FP128_DIV()            // [r, wp1, w, x]
+        FP127_DIV()            // [r, wp1, w, x]
 
         // Save r for return
         dup1                   // [r, r, wp1, w, x]
 
         // FSC: r/(2*wp1)
         dup3 0x01 shl          // [2*wp1, r, r, wp1, w, x]
-        FP128_DIV()            // [r/(2*wp1), r, wp1, w, x]
-        [ONE_FP128] add        // [1+r/(2*wp1), r, wp1, w, x]
-        FP128_MUL()            // [r_fsc, wp1, w, x]
+        FP127_DIV()            // [r/(2*wp1), r, wp1, w, x]
+        [ONE_FP127] add        // [1+r/(2*wp1), r, wp1, w, x]
+        FP127_MUL()            // [r_fsc, wp1, w, x]
 
         // w_new = w - r_fsc
         swap2                  // [w, wp1, r_fsc, x]
@@ -986,12 +986,12 @@
         0x40 0x00 return
 
     // Debug: FSC INIT step
-    // Takes (x_fp128, w_fp128), returns (w_new, ew_new, x)
+    // Takes (x_fp127, w_fp127), returns (w_new, ew_new, x)
     lambertw0_dbg_fsc_init_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        0x24 calldataload      // [w_fp128, x_fp128]
-        swap1                  // [x_fp128, w_fp128]
+        0x04 calldataload      // [x_fp127]
+        0x24 calldataload      // [w_fp127, x_fp127]
+        swap1                  // [x_fp127, w_fp127]
 
         LAMBERTW0_FSC_STEP_INIT()  // [x, w_new, ew_new]
 
@@ -1004,13 +1004,13 @@
         0x60 0x00 return
 
     // Debug: FSC REUSE step
-    // Takes (x_fp128, w_fp128, ew_fp128), returns (w_new, ew_new, x)
+    // Takes (x_fp127, w_fp127, ew_fp127), returns (w_new, ew_new, x)
     lambertw0_dbg_fsc_reuse_jump:
         pop
-        0x04 calldataload      // [x_fp128]
-        0x24 calldataload      // [w_fp128, x_fp128]
-        0x44 calldataload      // [ew_fp128, w_fp128, x_fp128]
-        swap2                  // [x_fp128, w_fp128, ew_fp128]
+        0x04 calldataload      // [x_fp127]
+        0x24 calldataload      // [w_fp127, x_fp127]
+        0x44 calldataload      // [ew_fp127, w_fp127, x_fp127]
+        swap2                  // [x_fp127, w_fp127, ew_fp127]
 
         LAMBERTW0_FSC_STEP_REUSE()  // [x, w_new, ew_new]
 

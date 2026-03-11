@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title FP128Math Wrapper
-/// @notice Wrapper library that delegates to Huff-compiled FP128 contract
-library FP128Math {
-    address constant FP128_ADDRESS = address(0x4650313238); // "FP128" in hex
+/// @title FP127Math Wrapper
+/// @notice Wrapper library that delegates to Huff-compiled FP127 contract
+library FP127Math {
+    address constant FP127_ADDRESS = address(0x4650313238); // "FP127" in hex
     
     function mul(uint256 a, uint256 b) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("mulRaw(uint256,uint256)", a, b)
         );
         require(success, "mul failed");
@@ -15,7 +15,7 @@ library FP128Math {
     }
     
     function div(uint256 a, uint256 b) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("divRaw(uint256,uint256)", a, b)
         );
         require(success, "div failed");
@@ -31,7 +31,7 @@ library FP128Math {
     }
     
     function exp(uint256 x) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("expRaw(uint256)", x)
         );
         require(success, "exp failed");
@@ -39,7 +39,7 @@ library FP128Math {
     }
     
     function exp2(uint256 x) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("exp2Raw(uint256)", x)
         );
         require(success, "exp2 failed");
@@ -47,7 +47,7 @@ library FP128Math {
     }
     
     function ln(uint256 x) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("lnRaw(uint256)", x)
         );
         require(success, "ln failed");
@@ -55,7 +55,7 @@ library FP128Math {
     }
     
     function sqrt(uint256 x) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("sqrtRaw(uint256)", x)
         );
         require(success, "sqrt failed");
@@ -63,7 +63,7 @@ library FP128Math {
     }
     
     function log2(uint256 x) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("log2Raw(uint256)", x)
         );
         require(success, "log2 failed");
@@ -71,7 +71,7 @@ library FP128Math {
     }
     
     function pow(uint256 x, uint256 y) internal view returns (uint256) {
-        (bool success, bytes memory data) = FP128_ADDRESS.staticcall(
+        (bool success, bytes memory data) = FP127_ADDRESS.staticcall(
             abi.encodeWithSignature("powRaw(uint256,uint256)", x, y)
         );
         require(success, "pow failed");

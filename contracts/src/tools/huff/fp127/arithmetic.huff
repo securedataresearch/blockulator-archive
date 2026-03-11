@@ -1,4 +1,4 @@
-/// @title FixedPoint128 - 128.128 Fixed-Point Arithmetic Library
+/// @title FixedPoint127 - 128.128 Fixed-Point Arithmetic Library
 /// @notice Signed fixed-point operations using two's complement
 /// @dev Format: 128 integer bits + 128 fractional bits
 ///      All operations preserve sign via two's complement
@@ -8,7 +8,7 @@
 /// @dev takes(2) returns(1)
 /// Stack input: [a, b]
 /// Stack output: [a + b]
-#define macro FP128_ADD() = takes(2) returns(1) {
+#define macro FP127_ADD() = takes(2) returns(1) {
     add
 }
 
@@ -16,7 +16,7 @@
 /// @dev takes(2) returns(1)
 /// Stack input: [a, b] (b on top)
 /// Stack output: [a - b]
-#define macro FP128_SUB() = takes(2) returns(1) {
+#define macro FP127_SUB() = takes(2) returns(1) {
     swap1     // [a, b] -> [b, a]
     sub       // b - a
 }
@@ -24,10 +24,10 @@
 /// @notice Convert signed fixed18 to 128.128 format
 /// @dev takes(1) returns(1)
 /// Stack input: [fixed18_value] (signed int256 representing value * 1e18)
-/// Stack output: [fp128_value] (signed int256 representing value * 2^128)
-/// Formula: fp128 = (fixed18 * 2^128) / 1e18
+/// Stack output: [fp127_value] (signed int256 representing value * 2^128)
+/// Formula: fp127 = (fixed18 * 2^128) / 1e18
 /// Gas: ~100 (optimized)
-#define fn FP128_FROM_FIXED18() = takes(1) returns(1) {
+#define fn FP127_FROM_FIXED18() = takes(1) returns(1) {
     // Input: [fixed18]
     // We need: (fixed18 * 2^128) / 1e18
     // For typical calculator use (values up to ~10^20), we're safe:
@@ -40,26 +40,26 @@
 
 /// @notice Convert 128.128 format to signed fixed18
 /// @dev takes(1) returns(1)
-/// Stack input: [fp128_value] (signed int256 representing value * 2^128)
+/// Stack input: [fp127_value] (signed int256 representing value * 2^128)
 /// Stack output: [fixed18_value] (signed int256 representing value * 1e18)
-/// Formula: fixed18 = (fp128_hi * 1e18) + ((fp128_lo * 1e18) >> 128)
-///          Split to avoid overflow: fp128 * 1e18 can exceed 256 bits
-/// Gas: ~120 (prevents overflow for all valid fp128 values)
-#define fn FP128_TO_FIXED18() = takes(1) returns(1) {
-    // Input: [fp128]
-    // Split: fp128 = (fp128_hi << 128) + fp128_lo
-    // Result: (fp128_hi * 1e18) + ((fp128_lo * 1e18) >> 128)
+/// Formula: fixed18 = (fp127_hi * 1e18) + ((fp127_lo * 1e18) >> 128)
+///          Split to avoid overflow: fp127 * 1e18 can exceed 256 bits
+/// Gas: ~120 (prevents overflow for all valid fp127 values)
+#define fn FP127_TO_FIXED18() = takes(1) returns(1) {
+    // Input: [fp127]
+    // Split: fp127 = (fp127_hi << 128) + fp127_lo
+    // Result: (fp127_hi * 1e18) + ((fp127_lo * 1e18) >> 128)
     
-    dup1                      // [fp128, fp128]
-    0x80 sar                  // [fp128_hi, fp128]
-    [FIXED18_SCALE]           // [1e18, fp128_hi, fp128]
-    mul                       // [fp128_hi * 1e18, fp128]
+    dup1                      // [fp127, fp127]
+    0x80 sar                  // [fp127_hi, fp127]
+    [FIXED18_SCALE]           // [1e18, fp127_hi, fp127]
+    mul                       // [fp127_hi * 1e18, fp127]
     
-    swap1                     // [fp128, fp128_hi * 1e18]
-    [MASK128] and             // [fp128_lo, fp128_hi * 1e18]
-    [FIXED18_SCALE]           // [1e18, fp128_lo, fp128_hi * 1e18]
-    mul                       // [fp128_lo * 1e18, fp128_hi * 1e18]
-    0x80 shr                  // [(fp128_lo * 1e18) >> 128, fp128_hi * 1e18]
+    swap1                     // [fp127, fp127_hi * 1e18]
+    [MASK128] and             // [fp127_lo, fp127_hi * 1e18]
+    [FIXED18_SCALE]           // [1e18, fp127_lo, fp127_hi * 1e18]
+    mul                       // [fp127_lo * 1e18, fp127_hi * 1e18]
+    0x80 shr                  // [(fp127_lo * 1e18) >> 128, fp127_hi * 1e18]
     
     add                       // [result]
 }
@@ -69,12 +69,12 @@
 /// Stack input: [b, a] (b on top)
 /// Stack output: [a * b]
 /// Formula: result = (a * b) / 2^128 (3-term approximation, omits Term4)
-/// Gas: ~125-140 (15 gas less than FP128_MUL)
+/// Gas: ~125-140 (15 gas less than FP127_MUL)
 /// WARNING: Only accurate when at least one operand has a small fractional part.
 ///          When both operands have large fractional parts and small integer parts
 ///          (e.g. 0.88 * 1.21), the omitted (a_lo * b_lo) >> 128 term can be huge.
-///          Use FP128_MUL() for general-purpose multiplication.
-#define macro FP128_MUL_FAST() = takes(2) returns(1) {
+///          Use FP127_MUL() for general-purpose multiplication.
+#define macro FP127_MUL_FAST() = takes(2) returns(1) {
     // Input: [b, a]
     // Split both: a = a_hi * 2^128 + a_lo, b = b_hi * 2^128 + b_lo
     // Result = a_hi * b_hi * 2^128 + a_hi * b_lo + a_lo * b_hi
@@ -109,7 +109,7 @@
 /// Formula: result = (a * b) / 2^128
 ///          Optimized: push MASK128 once and reuse via dup
 /// Gas: ~110-130 (reduced PUSH32 operations)
-#define fn FP128_MUL() = takes(2) returns(1) {
+#define fn FP127_MUL() = takes(2) returns(1) {
     // Input: [b, a]
     // Split both: a = a_hi * 2^128 + a_lo, b = b_hi * 2^128 + b_lo
     // Result = a_hi * b_hi * 2^128 + a_hi * b_lo + a_lo * b_hi + (a_lo * b_lo) >> 128
@@ -157,7 +157,7 @@
 /// Formula: result = (a * 2^128) / b using Remco Bloemen mulDiv algorithm
 /// Gas: ~450-550 (mulmod + modular inverse via Newton-Raphson)
 /// Precision: Full 128 fractional bits (exact for all inputs)
-#define fn FP128_DIV_UNSIGNED() = takes(2) returns(1) {
+#define fn FP127_DIV_UNSIGNED() = takes(2) returns(1) {
     // Input: [b, a]
     // We want to compute (a * 2^128) / b
     // Using Remco Bloemen's mulDiv algorithm from Uniswap V3
@@ -173,7 +173,7 @@
     // remainder = mulmod(a, 2^128, b)
     // mulmod pops [a, b, N] and pushes (a * b) % N
     // We need [a, 2^128, b] on top so it computes (a * 2^128) % b
-    dup3 [ONE_FP128] dup6      // [a, 2^128, b, prod1, prod0, b, a]
+    dup3 [ONE_FP127] dup6      // [a, 2^128, b, prod1, prod0, b, a]
     mulmod                     // [remainder, prod1, prod0, b, a]
     
     // Subtract remainder from [prod1:prod0]
@@ -233,7 +233,7 @@
 /// Gas: ~500-600 (sign handling + unsigned div)
 /// Precision: Full 128 fractional bits
 /// @dev Converted to function to save ~228 bytes (4 call sites)
-#define fn FP128_DIV() = takes(2) returns(1) {
+#define fn FP127_DIV() = takes(2) returns(1) {
     // Input: [b, a]
     // Strategy: compute sign, abs both, unsigned div, conditionally negate
     
@@ -257,9 +257,9 @@
     sub                        // [abs_a, a, abs_b, result_sign, b, a]
     swap1 pop                  // [abs_a, abs_b, result_sign, b, a]
     
-    // FP128_DIV_UNSIGNED expects [b, a] (b on top)
+    // FP127_DIV_UNSIGNED expects [b, a] (b on top)
     swap1                      // [abs_b, abs_a, result_sign, b, a]
-    FP128_DIV_UNSIGNED()       // [result, result_sign, b, a]
+    FP127_DIV_UNSIGNED()       // [result, result_sign, b, a]
     
     // Apply sign: result = (result ^ sign_mask) - sign_mask
     // This negates if sign_mask is all-ones, identity if zero
